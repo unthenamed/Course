@@ -7,7 +7,6 @@ Jika sudah, potonglah bambu beberapa kali berdasarkan inputan yang kamu inginkan
 Setiap potongan yang kamu lakukan akan menghilangkan 1 sekat disetiap bambu yang kamu miliki.
 Lalu tampilkanlah pada console sisa sekat bambu setiap pemotongan.
 
-
 Kriteria:
   > Gunakan variabel untuk menerima inputan dari console
   > Gunakan function
