@@ -1,11 +1,3 @@
-// ///////////////////////////////
-//
-//	Chapter 1					//
-//	Golang Introduction			//
-//	Abdul Jalil khoironi		//
-//
-// ///////////////////////////////
-
 package main
 
 import (
