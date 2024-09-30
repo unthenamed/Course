@@ -421,7 +421,362 @@ SELECT * FROM mst_student WHERE address IN ( 'Jakarta','Sidoarjo','Malang');
 
 SELECT * FROM mst_student WHERE address = 'Jakarta' OR address = 'Sidoarjo' OR address = 'Malang' ;
 ```
+
+* Trivia NULL ( IS NULL ) (Chapter 9)
+> Digunakan untuk mencari data yang NULL
+
+``` sql
+-- Syntax
+
+SELECT column1, column2, columnN
+FROM table_name
+WHERE column_name IS NULL;
+
+-- Contoh
+SELECT * FROM mst_table WHERE addres IS NULL;
+
+
+/* String kosong bukanlah NULL */
+
+```
+
+**[ LIMIT | OFFSET | DISTINCT | GROUP BY ] ( Chapter 10)**
+* LIMIT
+> Digunakan untuk menentukan jumlah data yang di ambil atau di tampilkan
+``` sql
+SELECT column1, column2, columnN
+FROM table_name
+LIMIT {no of rows};
+
+/* Contoh menampilkan 5 rows data */
+SELECT * FROM mst_student LIMIT 5;
+```
+
+* OFFSET
+> Digunakan untuk melompati sejumlah data di awal
+``` sql
+SELECT column1, column2, columnN
+FROM table_name
+OFFSET {no of rows};
+
+/* Contoh melewati 5 rows data */
+SELECT * FROM mst_student OFFSET 5;
+```
+
+
+``` sql
+-- kombinasi limit & offset untuk fetching halaman
+SELECT column1, column2, columnN
+FROM table_name
+LIMIT {no of rows} OFFSET {no of rows};
+
+-- contoh untuk menampilkan 5 data perhalaman
+SELECT * FROM mst_student LIMIT 5 OFFSET 0; -- menampilkan 1 - 5 di halaman
+SELECT * FROM mst_student LIMIT 5 OFFSET 5; -- menampilkan 5 - 10 di halaman
+SELECT * FROM mst_student LIMIT 5 OFFSET 10; -- menampilkan 10 - 15 di halaman
+```
+
+* DISTINCT
+> Digunakan untuk menampilkan unique values dari sebuah kolom
+``` sql
+SELECT DISTINCT column1, column2, columnN
+FROM table_name ;
+
+-- contoh
+SELECT DISTINCT address FROM mst_student;
+```
+
+* GROUP BY
+> Digunakan untuk mengelompokkan data yang sama atau identik
+``` sql
+SELECT column1, column2, columnN
+FROM table_name
+GROUP BY column1, column2, columnN ;
+
+--contoh
+SELECT address FROM mst_student GROUP BY address;
+```
+
 #### DCL (Data Control Language)
 DCL merupakan perintah SQL yang berhubungan dengan hak akses dan kontrol database
+
 ****GRANT****
+
 ****REVOKE****
+
+
+
+#### AGGREGAT FUNCTION (Chapter 11)
+
+**COUNT**
+> Mengembalikan jumlah baris dalam suatu kolom
+``` sql
+SELECT COUNT(column_name)
+FROM table_name;
+
+-- Contoh
+SELECT COUNT(diskon_fee) FROM mst_student;
+SELECT COUNT(*) FROM mst_student;
+SELECT COUNT(*) AS jumlah_siswa FROM mst_student;
+```
+**AVG**
+> Mengembalikan nilai rata-rata pasa suatu kolom
+``` sql
+SELECT AVG(column_name)
+FROM table_name;
+
+-- Contoh
+SELECT AVG(diskon_fee) AS rata-rata_diskon FROM mst_student;
+```
+* Function ROUND
+ > Digunakan untuk mengembaliman hasil pembulatan suatu nilai.
+``` sql
+-- Contoh
+SELECT ROUND(AVG(diskon_fee),2) FROM mst_student;  -- Untuk membulatkan 2 angka di belakang koma.
+SELECT ROUND(AVG(diskon_fee)) AS rata-rata_diskon FROM mst_student; -- Jika tidak mau ada koma sama sekali.
+```
+**MAX**
+> Digunakan untuk mengembalikan nilai maxsimum (MAX) atau minimum (MIN) pada suaty kolom
+``` sql
+/* Maksimum */
+SELECT MAX(column_name)
+FROM table_name;
+
+-- Contoh
+SELECT MAX(diskon_fee) AS diskon_terbesar FROM mst_student;
+
+/* Minimum*/
+SELECT MIN(column_name)
+FROM table_name;
+
+-- Contoh
+SELECT Min(diskon_fee) AS diskon_terkecil FROM mst_student;
+```
+**SUM**
+> Digunakan untuk menjulahkan semua nilai yang ada pada kolom
+
+``` sql
+SELECT SUM(column_name) 
+FROM table_name;
+
+-- Contoh
+SELECT SUM(diskon_fee) AS total_diskon FROM mst_student;
+```
+
+#### GROUPING (Chapter 12)
+> Digunakan untuk mengelompokan data berdasarkan kiretaria tertentu., dan akan lebih efektif jika penggunaannya di gabungkan dengan AGGREGAT FUNCTION.
+
+**COUNT**
+``` sql
+SELECT column_name, COUNT(column_ name)
+FROM table_name
+GROUP BY column_name;
+
+-- Contoh
+SELECT faculty, COUNT(*) AS jumlah_siswa FROM mst_student GROUP BY faculty;
+```
+
+**AVG**
+``` sql
+SELECT column_name, AVG(column_name)
+FROM table_name
+GROUP BY column_name;
+
+-- Contoh
+SELECT faculty, ROUND(AVG(diskon_fee)) AS rata-rata_diskon
+FROM mst_student
+GROUP BY faculty;
+```
+
+**MAX**
+``` sql
+SELECT column_name, MAX(column_name)
+FROM table_name
+GROUP BY column_name;
+
+-- Contoh
+SELECT faculty, MAX(diskon_fee) AS diskon_tertinggi
+FROM mst_student
+GRUP BY faculty;
+```
+**MIN**
+``` sql
+SELECT column_name, MIN(column_name)
+FROM table_name
+GROUP BY column_name;
+
+-- Contoh
+SELECT faculty, MIN(diskon_fee) AS diskon_terendah
+FROM mst_student
+GROUP BY faculty;
+```
+
+**SUM**
+
+``` sql
+SELECT column_name, SUM(column_name)
+FROM table_name
+GROUP BY column_name;
+-- Contoh
+SELECT faculty, SUM(diskon_fee) AS total_setiap_diskon
+FROM mst_student
+GROUP BY faculty;
+```
+
+* HAVING condition 
+> Having sama saja seperti where, namun penggunaannya yang berbeda
+
+| WHERE | HAVING |
+| :------: | :------: |
+| Digunakan untuk filter setiap record di dalam table berdasarkan kondisi tertentu | Digunakan untuk memfilter hasil dari GROUP BY atau aggregate function berdasarkan kondisi tertentu |
+| Ridak dapat di gabungkan dengan aggregate function | Dapat digabungkan dengan aggregate function |
+| Dapat digunakan dalam SELECT, INSERT, UPDATE dan DELETE | Hanya dapat digunakan dalam SELECT |
+| Dapat di gunakan tanpa GROUP BY | Hanya dapat digunakan dengan GROUP BY |
+
+
+``` sql
+SELECT column_name, AGGERAT_FUNCTIIN(column_name)
+FROM table_name
+GROUP BY column_name
+HAVING condition;
+
+-- Contoh
+SELECT faculty, SUM(diskon_fee) AS total_setiap diskon 
+FROM mst_student
+GROUP BY faculty
+HAVING SUM(faculty) > 10000000 ;
+
+SELECT faculty, SUM(diskon_fee) AS total_setiap diskon 
+FROM mst_student WHERE faculty ILIKE 'T&'
+GROUP BY faculty
+HAVING SUM(faculty) > 10000000 ;
+```
+
+## NORMALIZATION
+-
+> Normalization diperlukan untuk membuat data menjadi konsisten, database tidak akan error selama data yang kita masukan seseui dengan tipedatanya, diibaratkan memasukan namakota ke kolom namapeserta, tidak error namun secara kaidah itu tidak masuk akal, karna jika kondisi itu terjadi akan terjadi 3 masalah :
+1. UPDATE PROBLEM
+2. DELETE PROBLEM
+3. INSERT PROBLEM
+
+#### APA ITU NORMALISASI ?
+> Normalisasi adalah teknik untuk mengorganisir data kedalam table yang berelasi
+#### KENAPA KITA PERLU MENORMALISASI ?
+1. Membuat data kita konsisten
+2. Mengurangi data redudancy / data berulang
+
+#### NORMALIZATION FORM /ATURAN NORMALISASI
+
+1. First Normal From (1NF)
+* Hanya memiliki kolom bernilai tunggal
+* Nilai yang disimpan dalam kolom harus daei domain yang sama
+* Semua kolom dalam table harus memiliki nama yang unik
+
+2. Second Normal Form (2NF)
+* Harus sudah dalam First Normal Form ( 1NF )
+* Harus memiliki Primary Key
+* Seharusnya tidak memiloki Partial Dependency
+
+# RELATION
+> Relasi adalah hubungan antara dua table yang dimna satu table memiliki foregin key yang mereferensikan Primary Key pada table lainnya.
+
+***Jenis-Jenis Relasi dalam rdbms***
+1. One to One
+    Hubungan antara dua table dimna satu record dari salah satu table hanya dapat dihubungkan dengan satu record di table lainnya. 
+2. One to Many
+    Hubungan antra dua table dimana satu record dari salah satu table dapat di hubungkan dengan satu atau lebih record dari table lainnya.
+3. Many to Many
+    Hubungan antar dua table dimana satu record dari table pertama dapat di hubungan dengan satu atau lebih record dari table kedua dan satu record dari table kedua dapat di hubungkan dengan satu atau lebih record dari table pertama
+
+Menmbahkan Constraint Foreign Key
+``` sql
+ALTER TABLE nama_table ADD CONSTRAINT judul_constraint
+FOREIGN KEY (nama_kolom) REFERENCES nama_table_tujuan(kolom_dengn_pimarykey);
+```
+
+## JOINS
+
+> Joins digunakan untuk menggabungkan record dari dua atau lebih table berdasarkan kolom yang berelasi diantara table tersebut
+
+
+### INNER JOINS
+> mengembalikan record yang memiliki nilai yang cocok di kedua table
+
+``` sql
+SELECT column_name
+FROM table A
+INNER JOIN tableB
+ON tableA.coumn_name = tableB.column_name;
+
+-- contoh
+SELECT mst_store.name, mst_product.name, mst_product.price, mst_product.stock
+FROM mst_store INNER JOIN mst_product
+ON mst_store.id = mst_product.store_id
+```
+
+### LEFT JOIN
+> mengembalikan semua record dari table kiri. dan record yang cocok di table kanan.
+
+
+``` sql
+SELECT column_name
+FROM table A
+LEFT JOIN tableB
+ON tableA.coumn_name = tableB.column_name;
+
+-- contoh
+SELECT mst_store.name AS nama_toko , mst_product.name AS nama_produk, mst_product.price, mst_product.stock
+FROM mst_store LEFT JOIN mst_product
+ON mst_store.id = mst_product.store_id;
+```
+### RIGHT JOIN
+> mengembalikan semua record dari table kanan. dan record yang cocok di table kiri.
+
+
+``` sql
+SELECT column_name
+FROM table A
+RIGHT JOIN tableB
+ON tableA.coumn_name = tableB.column_name;
+
+-- contoh
+SELECT mst_store.name AS nama_toko , mst_product.name AS nama_produk, mst_product.price, mst_product.stock
+FROM mst_store RIGHT JOIN mst_product
+ON mst_store.id = mst_product.store_id;
+```
+### FULL OUTER JOIN
+> mengembalikan semua record ketika ada kecocokan di table kiri dan kanan
+
+``` sql
+SELECT column_name
+FROM table A
+FULL OUTER JOIN tableB
+ON tableA.coumn_name = tableB.column_name;
+
+-- contoh
+SELECT mst_store.name AS nama_toko , mst_product.name AS nama_produk, mst_product.price, mst_product.stock
+FROM mst_store FULL OUTER JOIN mst_product
+ON mst_store.id = mst_product.store_id;
+
+
+
+-- menggabungkan lebih dari dua table untuk join
+
+SELECT 
+c.name AS nama_custome,
+p.name AS nama_produk,
+t.quantity,
+s.name AS nama_toko,
+t.purchase_date
+FROM mst_transaction AS t
+
+JOIN mst_customer AS c
+ON t.customer_id = c.id
+
+JOIN mst.product AS p
+ON t.product_id = p.id
+
+JOIN mst_store AS s
+ON t.store_id = s.id
+
+```
