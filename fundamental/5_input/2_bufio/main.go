@@ -21,6 +21,7 @@ func main() {
 	// inputan untuk int menggunakan strconv
 	fmt.Print("\tUmur : ")
 	scanner.Scan()
+	//penggunaan strconv
 	age, _ := strconv.Atoi(scanner.Text())
 	age = (2024 - age)
 
